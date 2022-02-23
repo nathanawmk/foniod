@@ -15,28 +15,30 @@ output "ssh_user" {
 }
 
 resource "aws_instance" "ingraind" {
-  ami           = lookup(local.ec2_ami_map, var.ec2_os_ami)
-  instance_type = "t2.micro"
-  key_name      = var.ec2_ssh_key_name
+  ami                    = lookup(local.ec2_ami_map, var.ec2_os_ami)
+  instance_type          = "t2.micro"
+  key_name               = var.ec2_ssh_key_name
   vpc_security_group_ids = [data.aws_security_group.allow_ssh.id]
-  subnet_id     = data.aws_subnet.ingraind.id
+  subnet_id              = data.aws_subnet.ingraind.id
 
   availability_zone = "eu-west-1c"
   tags = {
-    Name = "ingraind-test"
+    Name      = "ingraind-test"
+    yor_trace = "23d0d09b-2d5d-403e-97ba-d831649d8718"
   }
 }
 
 resource "aws_instance" "ingraind_arm64" {
-  ami           = lookup(local.ec2_ami_map, var.ec2_os_ami)
-  instance_type = "a1.metal"
-  key_name      = var.ec2_ssh_key_name
+  ami                    = lookup(local.ec2_ami_map, var.ec2_os_ami)
+  instance_type          = "a1.metal"
+  key_name               = var.ec2_ssh_key_name
   vpc_security_group_ids = [data.aws_security_group.allow_ssh.id]
-  subnet_id     = data.aws_subnet.ingraind.id
+  subnet_id              = data.aws_subnet.ingraind.id
 
   availability_zone = "eu-west-1c"
   tags = {
-    Name = "ingraind-arm64-test"
+    Name      = "ingraind-arm64-test"
+    yor_trace = "1713c43c-ffcf-4f1c-aede-af7d3c100db6"
   }
 }
 
@@ -47,19 +49,19 @@ resource "null_resource" "provision" {
   }
 
   connection {
-    type = "ssh"
-    user = lookup(local.ec2_user_map, var.ec2_os_ami)
-    host = aws_instance.ingraind.public_ip
+    type        = "ssh"
+    user        = lookup(local.ec2_user_map, var.ec2_os_ami)
+    host        = aws_instance.ingraind.public_ip
     private_key = var.ec2_ssh_private_key
   }
 
   provisioner "file" {
-    source = "config.toml"
+    source      = "config.toml"
     destination = "/tmp/config.toml"
   }
 
   provisioner "file" {
-    source = "ingraind"
+    source      = "ingraind"
     destination = "/tmp/ingraind"
   }
 
@@ -82,9 +84,9 @@ resource "null_resource" "provision_arm64" {
   }
 
   connection {
-    type = "ssh"
-    user = lookup(local.ec2_user_map, var.ec2_os_ami)
-    host = aws_instance.ingraind_arm64.public_ip
+    type        = "ssh"
+    user        = lookup(local.ec2_user_map, var.ec2_os_ami)
+    host        = aws_instance.ingraind_arm64.public_ip
     private_key = var.ec2_ssh_private_key
   }
 
@@ -93,12 +95,12 @@ resource "null_resource" "provision_arm64" {
   }
 
   provisioner "file" {
-    source = "config.toml"
+    source      = "config.toml"
     destination = "/home/ubuntu/config.toml"
   }
 
   provisioner "file" {
-    source = "provision-arm64.sh"
+    source      = "provision-arm64.sh"
     destination = "/home/ubuntu/provision.sh"
   }
 
@@ -106,14 +108,14 @@ resource "null_resource" "provision_arm64" {
 
 data "aws_subnet" "ingraind" {
   filter {
-    name = "tag:Environment"
+    name   = "tag:Environment"
     values = ["ingraind-test"]
   }
 }
 
 data "aws_security_group" "allow_ssh" {
   filter {
-    name = "tag:Environment"
+    name   = "tag:Environment"
     values = ["ingraind-test"]
   }
 }
@@ -147,7 +149,7 @@ variable "ec2_ssh_private_key" {
 }
 
 variable "ec2_os_ami" {
-  type = string
+  type    = string
   default = "ubuntu-1804"
 }
 
