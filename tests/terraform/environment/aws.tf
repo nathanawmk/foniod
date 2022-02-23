@@ -16,6 +16,7 @@ resource "aws_vpc" "ingraind" {
 
   tags = {
     Environment = "ingraind-test"
+    yor_trace   = "bc815855-9a3d-427f-abb7-4350a6b9902e"
   }
 }
 
@@ -24,22 +25,24 @@ resource "aws_internet_gateway" "gw" {
 
   tags = {
     Environment = "ingraind-test"
+    yor_trace   = "1cd77b56-9662-4402-8d07-3f64fc01d836"
   }
 }
 
 resource "aws_subnet" "ingraind" {
-  vpc_id            = "${aws_vpc.ingraind.id}"
-  cidr_block        = "172.16.10.0/24"
+  vpc_id                  = "${aws_vpc.ingraind.id}"
+  cidr_block              = "172.16.10.0/24"
   map_public_ip_on_launch = true
 
   availability_zone = "eu-west-1c"
   tags = {
     Environment = "ingraind-test"
+    yor_trace   = "41db32a7-fcbe-44f6-96fa-a08702829ca7"
   }
 }
 
 resource "aws_route_table" "internet" {
-  vpc_id            = "${aws_vpc.ingraind.id}"
+  vpc_id = "${aws_vpc.ingraind.id}"
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -48,6 +51,7 @@ resource "aws_route_table" "internet" {
 
   tags = {
     Environment = "ingraind-test"
+    yor_trace   = "5121eea0-592b-49b5-b30b-dc2e5ac36278"
   }
 }
 
@@ -60,10 +64,10 @@ resource "aws_security_group" "allow_ssh" {
   vpc_id = "${aws_vpc.ingraind.id}"
 
   ingress {
-    protocol  = "tcp"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 22
-    to_port   = 22
+    from_port   = 22
+    to_port     = 22
   }
 
   egress {
@@ -75,5 +79,6 @@ resource "aws_security_group" "allow_ssh" {
 
   tags = {
     Environment = "ingraind-test"
+    yor_trace   = "d24f9af8-ddf1-40bd-973a-749cdd7e3b08"
   }
 }
